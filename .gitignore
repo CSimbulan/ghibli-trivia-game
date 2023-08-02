@@ -1,2 +1,4 @@
-node_modules
+/node_modules
+/client/public/character_images
+/client/public/music
 .env
