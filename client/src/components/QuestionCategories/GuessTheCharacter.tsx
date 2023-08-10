@@ -13,23 +13,8 @@ interface GuessTheCharacterProps {
   difficulty: string;
   scores: { player: number; score: number }[];
   onPlayerButtonClick: (player: number) => void;
+  question: any;//change
 }
-
-const questionsAction: {
-  [key: string]: any;
-} = character_questions_action;
-const questionsFantasy: {
-  [key: string]: any;
-} = character_questions_fantasy;
-const questionsComedy: {
-  [key: string]: any;
-} = character_questions_comedy;
-const questionsSlifeofLife: {
-  [key: string]: any;
-} = character_questions_sliceoflife;
-const questionsRomance: {
-    [key: string]: any;
-  } = character_questions_romance;
 
 const GuessTheCharacter: React.FC<GuessTheCharacterProps> = ({
   category,
@@ -37,37 +22,10 @@ const GuessTheCharacter: React.FC<GuessTheCharacterProps> = ({
   difficulty,
   scores,
   onPlayerButtonClick,
+  question
 }) => {
   const [questionTimer, setQuestionTimer] = useState(true);
   const [reveal, setReveal] = useState(false);
-
-  let questionSet = [];
-
-  switch (genre) {
-    case "action":
-      questionSet = questionsAction[difficulty];
-      break;
-    case "fantasy":
-      questionSet = questionsFantasy[difficulty];
-      break;
-    case "comedy":
-      questionSet = questionsComedy[difficulty];
-      break;
-    case "sliceoflife":
-      questionSet = questionsSlifeofLife[difficulty];
-      break;
-      case "romance":
-        questionSet = questionsRomance[difficulty];
-        break;
-    default:
-      questionSet = questionsAction["easy"];
-      break;
-  }
-
-  console.log(genre);
-  console.log(questionSet);
-
-  const randomIndex = Math.floor(Math.random() * questionSet.length);
 
   return (
     <>
@@ -102,7 +60,7 @@ const GuessTheCharacter: React.FC<GuessTheCharacterProps> = ({
         <img
           src={
             process.env.PUBLIC_URL +
-            questionSet[randomIndex][reveal ? "image" : "shadow"]
+            question[reveal ? "image" : "shadow"]
           }
           height="150%"
         />
@@ -118,10 +76,10 @@ const GuessTheCharacter: React.FC<GuessTheCharacterProps> = ({
           {reveal ? (
             <>
               <Typography variant="h3">
-                {questionSet[randomIndex].character}
+                {question.character}
               </Typography>
               <Typography variant="h3">
-                {questionSet[randomIndex].source}
+                {question.source}
               </Typography>
             </>
           ) : (

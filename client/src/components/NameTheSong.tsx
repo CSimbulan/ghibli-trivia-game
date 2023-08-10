@@ -1,7 +1,8 @@
 import { Pause, PlayArrow } from "@mui/icons-material";
 import { Box, Button, IconButton, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CountDown from "./CountDown";
+import { music_questions_action } from "./QuestionCategories/music_action";
 
 interface NameTheSongProps {
   category: string;
@@ -9,6 +10,7 @@ interface NameTheSongProps {
   difficulty: string;
   scores: { player: number; score: number }[];
   onPlayerButtonClick: (player: number) => void;
+  question: any;//change
 }
 
 const NameTheSong: React.FC<NameTheSongProps> = ({
@@ -17,26 +19,23 @@ const NameTheSong: React.FC<NameTheSongProps> = ({
   difficulty,
   scores,
   onPlayerButtonClick,
+  question
 }) => {
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [reveal, setReveal] = useState(false);
   const [questionTimer, setQuestionTimer] = useState(true);
 
-  const audio = new Audio(
-    process.env.PUBLIC_URL + "/music/LiSa - Catch the Moment.mp3"
-  );
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const toggleAudio = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  useEffect(() => {
     if (isPlaying) {
-      audio.pause();
+        audioRef.current?.pause();
+        setIsPlaying(false)
     } else {
-      audio.play();
+        audioRef.current?.play();
+        setIsPlaying(true)
     }
-  }, [isPlaying]);
+  };
 
   return (
 
@@ -84,11 +83,14 @@ const NameTheSong: React.FC<NameTheSongProps> = ({
       >
         {reveal ? (
           <>
-            <Typography variant="h3">
-              {'Catch the Moment by LiSa'}
+            <Typography variant="h4" style={{margin: 16}}>
+              {`Song: ${question.song}`}
             </Typography>
-            <Typography variant="h3">
-              {'SAO'}
+            <Typography variant="h4"  style={{margin: 16}}>
+              {`Artist: ${question.artist}`}
+            </Typography>
+            <Typography variant="h4"  style={{margin: 16}}> 
+              {`Anime: ${question.anime}`}
             </Typography>
           </>
         ) : (
@@ -114,6 +116,7 @@ const NameTheSong: React.FC<NameTheSongProps> = ({
         </Button>
       ))}
     </Box>
+    <audio ref={audioRef} loop src={process.env.PUBLIC_URL + question.url}/>
   </>
 
   );
