@@ -2,32 +2,47 @@ import { Pause, PlayArrow } from "@mui/icons-material";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import CountDown from "./CountDown";
-import { music_questions_action } from "./QuestionCategories/music_action";
+import { red } from "@mui/material/colors";
+import { musicQuestions } from "../questions/name_the_song/nameTheSong";
 
 interface NameTheSongProps {
   category: string;
-  genre: string;
   difficulty: string;
   scores: { player: number; score: number }[];
   onPlayerButtonClick: (player: number) => void;
-  question: any;//change
 }
+
+export const indexMap: {
+  [key: string]: any;
+} = {
+  q1: 0,
+  q2: 1,
+  q3: 2,
+  q4: 3,
+  q5: 4
+}
+
+
 
 const NameTheSong: React.FC<NameTheSongProps> = ({
   category,
-  genre,
   difficulty,
   scores,
   onPlayerButtonClick,
-  question
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [reveal, setReveal] = useState(false);
   const [questionTimer, setQuestionTimer] = useState(true);
 
+  const questions = musicQuestions;
+  const question = questions.find(q => q.id === difficulty)!!;
+
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const toggleAudio = () => {
+    if (audioRef.current?.volume) {
+      audioRef.current.volume = 0.6;
+    }
     if (isPlaying) {
         audioRef.current?.pause();
         setIsPlaying(false)
@@ -46,7 +61,10 @@ const NameTheSong: React.FC<NameTheSongProps> = ({
       alignItems="center"
       padding={3}
       height="50%"
-      width="100%"
+      width="90%"
+      border="3px solid black"
+      borderRadius={5}
+      bgcolor={'white'}
     >
       <Box
         width="33%"
@@ -54,19 +72,19 @@ const NameTheSong: React.FC<NameTheSongProps> = ({
         justifyContent="space-evenly"
         alignItems="center"
       >
-        {questionTimer ? (
+        {/* {questionTimer ? (
           <>
             <CountDown
               seconds={30}
               onCountdownEnd={() => {
                 setQuestionTimer(false);
-                setReveal(true);
+                setReveal(false);
               }}
             ></CountDown>
           </>
         ) : (
           <Typography variant="h2">Times up!</Typography>
-        )}
+        )} */}
       </Box>
 
       <IconButton onClick={toggleAudio}>
@@ -86,12 +104,12 @@ const NameTheSong: React.FC<NameTheSongProps> = ({
             <Typography variant="h4" style={{margin: 16}}>
               {`Song: ${question.song}`}
             </Typography>
-            <Typography variant="h4"  style={{margin: 16}}>
+            {/* <Typography variant="h4"  style={{margin: 16}}>
               {`Artist: ${question.artist}`}
             </Typography>
             <Typography variant="h4"  style={{margin: 16}}> 
               {`Anime: ${question.anime}`}
-            </Typography>
+            </Typography> */}
           </>
         ) : (
           <Button
@@ -103,18 +121,6 @@ const NameTheSong: React.FC<NameTheSongProps> = ({
           </Button>
         )}
       </Box>
-    </Box>
-    <Box width="100%" display="flex" justifyContent="space-around">
-      {scores.map((player) => (
-        <Button
-          variant="contained"
-          color="success"
-          size="large"
-          onClick={() => onPlayerButtonClick(player.player)}
-        >
-          {`Player ${player.player}`}
-        </Button>
-      ))}
     </Box>
     <audio ref={audioRef} loop src={process.env.PUBLIC_URL + question.url}/>
   </>

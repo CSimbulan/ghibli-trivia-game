@@ -1,37 +1,21 @@
 import React, { useState } from "react";
 import CountDown from "./CountDown";
-import { Box, Button, IconButton, Typography, styled } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
-import { grey } from "@mui/material/colors";
+import { Box, IconButton, Typography, styled } from "@mui/material";
+import { ArrowBack, Close } from "@mui/icons-material";
+import { grey, red } from "@mui/material/colors";
 import { genresMap } from "./GameBoard";
-import GeneralKnowledge from "./QuestionCategories/GeneralKnowledge";
-import GuessTheCharacter from "./QuestionCategories/GuessTheCharacter";
 import NameTheSong from "./NameTheSong";
-import { music_questions_action } from "./QuestionCategories/music_action";
-import { music_questions_comedy } from "./QuestionCategories/music_comedy";
-import { music_questions_fantasy } from "./QuestionCategories/music_fantasy";
-import { music_questions_romance } from "./QuestionCategories/music_romance";
-import { music_questions_sliceoflife } from "./QuestionCategories/music_sliceoflife";
-import { character_questions_action } from "./QuestionCategories/character_action";
-import { character_questions_comedy } from "./QuestionCategories/character_comedy";
-import { character_questions_fantasy } from "./QuestionCategories/character_fantasy";
-import { character_questions_romance } from "./QuestionCategories/character_romance";
-import { character_questions_sliceoflife } from "./QuestionCategories/character_sliceoflife";
-import { general_questions_action } from "./QuestionCategories/general_action";
-import { general_questions_sliceoflife } from "./QuestionCategories/general_sliceoflife";
-import { general_questions_comedy } from "./QuestionCategories/general_comedy";
-import { general_questions_fantasy } from "./QuestionCategories/general_fantasy";
-import { general_questions_romance } from "./QuestionCategories/general_romance";
+import MultipleChoice from "./MultipleChoice";
+import WhichMovie from "./WhichMovie";
+import CharacterVoice from "./CharacterVoice";
 
 interface QuestionProps {
   category: string;
-  genre: string;
   difficulty: string;
   scores: { player: number; score: number }[];
   updateScore: (player: number, amount: number) => void;
   updateGameBoard: (
     category: string,
-    genre: string,
     difficulty: string
   ) => void;
   returnToGameBoard: () => void;
@@ -40,58 +24,20 @@ interface QuestionProps {
 const backButtonColor = grey[300];
 const backButtonColorHover = grey[500];
 
-const generalQuestionsAction: {
-  [key: string]: any;
-} = general_questions_action;
-const generalQuestionsComedy: {
-  [key: string]: any;
-} = general_questions_comedy;
-const generalQuestionsFantasy: {
-  [key: string]: any;
-} = general_questions_fantasy;
-const generalQuestionsSliceofLife: {
-  [key: string]: any;
-} = general_questions_sliceoflife;
-const generalQuestionsRomance: {
-  [key: string]: any;
-} = general_questions_romance;
-
-const characterQuestionsAction: {
-  [key: string]: any;
-} = character_questions_action;
-const characterQuestionsFantasy: {
-  [key: string]: any;
-} = character_questions_fantasy;
-const characterQuestionsComedy: {
-  [key: string]: any;
-} = character_questions_comedy;
-const characterQuestionsSlifeofLife: {
-  [key: string]: any;
-} = character_questions_sliceoflife;
-const characterQuestionsRomance: {
-    [key: string]: any;
-  } = character_questions_romance;
-
-const musicQuestionsAction: {
-  [key: string]: any;
-} = music_questions_action;
-const musicQuestionsComedy: {
-  [key: string]: any;
-} = music_questions_comedy;
-const musicQuestionsFantasy: {
-  [key: string]: any;
-} = music_questions_fantasy;
-const musicQuestionsSliceofLife: {
-  [key: string]: any;
-} = music_questions_sliceoflife;
-const musicQuestionsRomance: {
-  [key: string]: any;
-} = music_questions_romance;
+const failButtonColor = red[500];
+const failButtonColorHover = red[900];
 
 const BackButton = styled(IconButton)({
   backgroundColor: backButtonColor,
   "&:hover": {
     backgroundColor: backButtonColorHover,
+  },
+});
+
+const FailButton = styled(IconButton)({
+  backgroundColor: failButtonColor,
+  "&:hover": {
+    backgroundColor: failButtonColorHover,
   },
 });
 
@@ -105,128 +51,178 @@ const DifficultyPoints: {
 
 const Question: React.FC<QuestionProps> = ({
   category,
-  genre,
   difficulty,
   scores,
   updateScore,
   updateGameBoard,
   returnToGameBoard,
 }) => {
-  const [waiting, setWaiting] = useState(true);
+  const [waiting, setWaiting] = useState(false);
 
   const getCategory = (category: string | null): string => {
     switch (category) {
       case "general":
         return "General Knowledge";
+      case "line":
+        return "Guess The Next Line";
+
+      case "scene":
+        return "What Anime is This?";
       case "character":
         return "Guess the Character";
       case "song":
         return "Name the Anime Song";
+
+        case "voice":
+          return "Who's Voice is That?";
       default:
         return "None";
     }
   };
 
   const onPlayerButtonClick = (player: number) => {
-    updateScore(player, DifficultyPoints[difficulty]);
+    updateScore(player, 1);
     returnToGameBoard();
-    updateGameBoard(category, genre, difficulty);
+    updateGameBoard(category, difficulty);
+  };
+
+  const onFailureButtonClick = () => {
+    returnToGameBoard();
+    updateGameBoard(category, difficulty);
   };
 
   const renderQuestion = () => {
-    let questionSet = [];
+    // let questionSet = [];
 
-    switch (true) {
+    // switch (true) {
 
+    //   case category == "general" && genre == "action":
+    //     questionSet = generalQuestionsAction[difficulty];
+    //     break;
+    //   case ((category == 'general') && (genre == "comedy")):
+    //     questionSet = generalQuestionsComedy[difficulty];
+    //     break;
+    //   case category == "general" && genre == "fantasy":
+    //     questionSet = generalQuestionsFantasy[difficulty];
+    //     break;
+    //     case category == "general" && genre == "horror":
+    //       questionSet = generalQuestionsFantasy[difficulty];
+    //       break;
+    //   case ((category == 'general') && (genre == "sliceoflife")):
+    //     questionSet = generalQuestionsSliceofLife[difficulty];
+    //     break;
+    //   case category == "general" && genre == "romance":
+    //     questionSet = generalQuestionsRomance[difficulty];
+    //     break;
 
-      case category == "general" && genre == "action":
-        questionSet = generalQuestionsAction[difficulty];
-        break;
-      case ((category == 'general') && (genre == "comedy")):
-        questionSet = generalQuestionsComedy[difficulty];
-        break;
-      case category == "general" && genre == "fantasy":
-        questionSet = generalQuestionsFantasy[difficulty];
-        break;
-      case ((category == 'general') && (genre == "sliceoflife")):
-        questionSet = generalQuestionsSliceofLife[difficulty];
-        break;
-      case category == "general" && genre == "romance":
-        questionSet = generalQuestionsRomance[difficulty];
-        break;
+    //   case category == "character" && genre == "action":
+    //     questionSet = characterQuestionsAction[difficulty];
+    //     break;
+    //   case ((category == 'character') && (genre == "comedy")):
+    //     questionSet = characterQuestionsComedy[difficulty];
+    //     break;
+    //   case category == "character" && genre == "fantasy":
+    //     questionSet = characterQuestionsFantasy[difficulty];
+    //     break;
+    //   case ((category == 'character') && (genre == "sliceoflife")):
+    //     questionSet = characterQuestionsSlifeofLife[difficulty];
+    //     break;
+    //   case category == "character" && genre == "romance":
+    //     questionSet = characterQuestionsRomance[difficulty];
+    //     break;
 
-      case category == "character" && genre == "action":
-        questionSet = characterQuestionsAction[difficulty];
-        break;
-      case ((category == 'character') && (genre == "comedy")):
-        questionSet = characterQuestionsComedy[difficulty];
-        break;
-      case category == "character" && genre == "fantasy":
-        questionSet = characterQuestionsFantasy[difficulty];
-        break;
-      case ((category == 'character') && (genre == "sliceoflife")):
-        questionSet = characterQuestionsSlifeofLife[difficulty];
-        break;
-      case category == "character" && genre == "romance":
-        questionSet = characterQuestionsRomance[difficulty];
-        break;
+    //   case category == "character" && genre == "action":
+    //     questionSet = characterQuestionsAction[difficulty];
+    //     break;
+    //   case ((category == 'song') && (genre == "comedy")):
+    //     questionSet = musicQuestionsComedy[difficulty];
+    //     break;
+    //   case category == "song" && genre == "fantasy":
+    //     questionSet = musicQuestionsFantasy[difficulty];
+    //     break;
+    //   case ((category == 'song') && (genre == "sliceoflife")):
+    //     questionSet = musicQuestionsSliceofLife[difficulty];
+    //     break;
+    //   case category == "song" && genre == "romance":
+    //     questionSet = musicQuestionsRomance[difficulty];
+    //     break;
+    //   default:
+    //     questionSet = musicQuestionsAction[difficulty];
+    //     break;
+    // }
 
-      case category == "character" && genre == "action":
-        questionSet = characterQuestionsAction[difficulty];
-        break;
-      case ((category == 'song') && (genre == "comedy")):
-        questionSet = musicQuestionsComedy[difficulty];
-        break;
-      case category == "song" && genre == "fantasy":
-        questionSet = musicQuestionsFantasy[difficulty];
-        break;
-      case ((category == 'song') && (genre == "sliceoflife")):
-        questionSet = musicQuestionsSliceofLife[difficulty];
-        break;
-      case category == "song" && genre == "romance":
-        questionSet = musicQuestionsRomance[difficulty];
-        break;
-      default:
-        questionSet = musicQuestionsAction[difficulty];
-        break;
-    }
-
-    const randomIndex = Math.floor(Math.random() * questionSet.length);
+    // const randomIndex = Math.floor(Math.random() * questionSet.length);
 
     switch (category) {
-      case "general":
+      // case "general":
+      //   return (
+      //     <GeneralKnowledge
+      //       category={category}
+      //       genre={genre}
+      //       difficulty={difficulty}
+      //       scores={scores}
+      //       onPlayerButtonClick={onPlayerButtonClick}
+      //       question={questionSet[randomIndex]}
+      //     />
+      //   );
+
+      case "multipleChoice":
         return (
-          <GeneralKnowledge
+          <MultipleChoice
             category={category}
-            genre={genre}
             difficulty={difficulty}
             scores={scores}
             onPlayerButtonClick={onPlayerButtonClick}
-            question={questionSet[randomIndex]}
           />
         );
 
-      case "character":
+      case "whichMovie":
         return (
-          <GuessTheCharacter
+          <WhichMovie
             category={category}
-            genre={genre}
             difficulty={difficulty}
             scores={scores}
             onPlayerButtonClick={onPlayerButtonClick}
-            question={questionSet[randomIndex]}
           />
         );
 
-      case "song":
+      case "nameTheSong":
         return (
           <NameTheSong
             category={category}
-            genre={genre}
             difficulty={difficulty}
             scores={scores}
             onPlayerButtonClick={onPlayerButtonClick}
-            question={questionSet[randomIndex]}
+          />
+        );
+
+      case "characterVoice":
+        return (
+          <CharacterVoice
+            category={category}
+            difficulty={difficulty}
+            scores={scores}
+            onPlayerButtonClick={onPlayerButtonClick}
+          />
+        );
+
+      case "voice":
+        return (
+          <MultipleChoice
+            category={category}
+            difficulty={difficulty}
+            scores={scores}
+            onPlayerButtonClick={onPlayerButtonClick}
+          />
+        );
+
+      default:
+        return (
+          <MultipleChoice
+            category={category}
+            difficulty={difficulty}
+            scores={scores}
+            onPlayerButtonClick={onPlayerButtonClick}
           />
         );
     }
@@ -243,31 +239,89 @@ const Question: React.FC<QuestionProps> = ({
       margin={3}
     >
       {/*TODO: Make button location fixed in top left corner */}
-      <Box width="100%">
-        <BackButton size="large" onClick={() => returnToGameBoard()}>
-          <ArrowBack />
-        </BackButton>
+      <Box
+        width="100%"
+        display="flex"
+        alignItems="start"
+        justifyContent="center"
+        position="relative"
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          position="absolute"
+          top={0}
+          left={0}
+        >
+          <BackButton size="large" onClick={() => returnToGameBoard()}>
+            <ArrowBack />
+          </BackButton>
+          {!waiting && (
+            <FailButton
+              size="large"
+              onClick={() => onFailureButtonClick()}
+              style={{ marginTop: 16 }}
+            >
+              <Close />
+            </FailButton>
+          )}
+        </Box>
+        {!waiting && (
+          <>
+            <Box
+              position="absolute"
+              p={2}
+              display="flex"
+              justifyContent="center"
+              margin={3}
+              bgcolor="white"
+              border="3px solid black"
+              borderRadius={5}
+            >
+              <Typography variant="h5">
+                {genresMap.find((element) => element.value === category)?.header +
+                  ": " +
+                  difficulty.toUpperCase()}
+              </Typography>
+            </Box>
+          </>
+        )}
       </Box>
       {waiting ? (
         <>
-          <Box width="100%" display="flex" justifyContent="center" margin={3}>
+          <Box
+            width="70%"
+            p={3}
+            display="flex"
+            justifyContent="center"
+            margin={3}
+            bgcolor="white"
+            border="3px solid black"
+            borderRadius={5}
+          >
             <Typography variant="h2">{getCategory(category)}</Typography>
           </Box>
           <Box
-            width="100%"
+            width="70%"
             display="flex"
             justifyContent="space-evenly"
             margin={3}
+            p={3}
+            bgcolor="white"
+            border="3px solid black"
+            borderRadius={5}
           >
-            <Typography variant="h3">
+            <Typography variant="h4">
               {/*TODO: Capitalize first letter */}
               {`Genre: ${
-                genresMap.find((element) => element.value === genre)?.header
+                genresMap.find((element) => element.value === category)?.header
               }`}
             </Typography>
-            <Typography variant="h3">
+            <Typography variant="h4">
               {/*TODO: Capitalize first letter */}
-              {`Difficulty: ${difficulty}`}
+              {`Question ${difficulty[1]}`}
             </Typography>
           </Box>
           <Box width="100%" display="flex" justifyContent="center" margin={3}>
@@ -279,6 +333,7 @@ const Question: React.FC<QuestionProps> = ({
             borderRadius={"20px"}
             display="flex"
             justifyContent="center"
+            bgcolor={"white"}
           >
             <CountDown
               seconds={3}

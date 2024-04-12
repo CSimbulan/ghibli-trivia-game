@@ -13,107 +13,79 @@ export interface GameType {
   scores: { player: number; score: number }[];
   currentQuestion: {
     category: string;
-    genre: string;
     difficulty: string;
   };
 }
 
 const defaultGameBoard: GameType = {
   playerCount: 0,
-  state: "not-started",
+  state: "started",
   game_board: {
-    general: {
-      action: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      comedy: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
 
-      fantasy: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      sliceoflife: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      romance: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
+    multipleChoice: {
+      q1: 1,
+      q2: 1,
+      q3: 1,
+      q4: 1,
+      q5: 1,
+      q6: 1,
+      q7: 1,
+      q8: 1,
+      q9: 1,
+      q10: 1,
+      q11: 1,
+      q12: 1,
+      q13: 1,
+      q15: 1,
+      q16: 1,
+      q17: 1,
+      q18: 1,
+      q19: 1,
+      q20: 1,
     },
 
-    character: {
-      action: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      comedy: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-
-      fantasy: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      sliceoflife: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      romance: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
+    whichMovie: {
+      q1: 1,
+      q2: 1,
+      q3: 1,
+      q4: 1,
+      q5: 1,
+      q6: 1,
+      q7: 1,
+      q8: 1,
+      q9: 1,
+      q10: 1,
+      q11: 1,
+      q12: 1,
     },
 
-    song: {
-      action: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      comedy: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
+    nameTheSong: {
+      q1: 1,
+      q2: 1,
+      q3: 1,
+      q4: 1,
+      q5: 1,
+      q6: 1,
+      q7: 1,
+      q8: 1,
+      q9: 1,
+      q10: 1,
+    },
 
-      fantasy: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      sliceoflife: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
-      romance: {
-        easy: 1,
-        medium: 1,
-        hard: 1,
-      },
+    characterVoice: {
+      q1: 1,
+      q2: 1,
+      q3: 1,
+      q4: 1,
+      q5: 1,
+      q6: 1,
+      q7: 1,
     },
   },
   scores: [],
   currentQuestion: {
-    category: '',
-    genre: '',
-    difficulty: 'easy',
+    category: "",
+    difficulty: "easy",
   },
 };
 
@@ -122,7 +94,6 @@ function App() {
 
   const updateGameBoard = (
     category: string,
-    genre: string,
     difficulty: string
   ) => {
     setGame((prev) => ({
@@ -130,8 +101,7 @@ function App() {
       game_board: {
         ...prev.game_board,
         [category]: {
-          ...prev.game_board[category],
-          [genre]: { ...prev.game_board[category][genre], [difficulty]: 0 },
+          ...prev.game_board[category], [difficulty]: 0 ,
         },
       },
     }));
@@ -139,45 +109,75 @@ function App() {
 
   const setCurrentQuestion = (
     category: string,
-    genre: string,
     difficulty: string
   ) => {
     setGame((prev) => ({
       ...prev,
       currentQuestion: {
         category,
-        genre,
         difficulty,
       },
     }));
-  }
+  };
 
   const updateScore = (player: number, amount: number) => {
-    const temp = game.scores.map(p => p.player === player ? {...p, score: p.score + amount} : p)
-    setGame(prev => ({
+    const temp = game.scores.map((p) =>
+      p.player === player ? { ...p, score: p.score + amount } : p
+    );
+    setGame((prev) => ({
       ...prev,
-      scores: temp
-    }))
+      scores: temp,
+    }));
+  };
+
+  const restartScore = () => {
+    const temp = game.scores.map((p) => ({ ...p, score: 0 }));
+    setGame((prev) => ({
+      ...prev,
+      scores: temp,
+    }));
+  };
+
+  const addPlayer = () => {
+    const temp = game.scores;
+    temp.push({ player: temp.length + 1, score: 0 });
+    setGame((prev) => ({
+      ...prev,
+      scores: temp,
+    }));
+  };
+
+  const removePlayer = () => {
+    const temp = game.scores.slice(0, -1);
+    setGame((prev) => ({
+      ...prev,
+      scores: temp,
+    }));
   };
 
   const initializePlayerCount = (count: number) => {
-    let scoresArray = []
-    for (var i = 1; i <= count; i++){
-      scoresArray.push({player: i, score: 0})
-  }
-    setGame({ ...game, playerCount: count, state: "started", scores: scoresArray });
+    let scoresArray = [];
+    for (var i = 1; i <= count; i++) {
+      scoresArray.push({ player: i, score: 0 });
+    }
+    setGame({
+      ...game,
+      playerCount: count,
+      state: "started",
+      scores: scoresArray,
+    });
   };
 
   const returnToGameBoard = () => {
-    setGame(prev => ({
+    setGame((prev) => ({
       ...prev,
       currentQuestion: {
-        category: '',
-        genre: '',
-        difficulty: 'easy',
-      }
-    }))
-  }
+        category: "",
+        genre: "",
+        difficulty: "easy",
+      },
+    }));
+  };
 
   return (
     <Box
@@ -187,13 +187,16 @@ function App() {
       display="flex"
       justifyContent="center"
       alignItems="center"
+      style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL}/logo-color.png)`,
+        backgroundSize: '10%'
+      }}
     >
       {game.state === "not-started" ? (
         <Initialize initializePlayerCount={initializePlayerCount}></Initialize>
       ) : game.currentQuestion.category ? (
         <Question
           category={game.currentQuestion.category}
-          genre={game.currentQuestion.genre}
           difficulty={game.currentQuestion.difficulty}
           scores={game.scores}
           updateScore={updateScore}
@@ -201,7 +204,15 @@ function App() {
           updateGameBoard={updateGameBoard}
         />
       ) : (
-        <GameBoard game={game} updateGameBoard={updateGameBoard} setCurrentQuestion={setCurrentQuestion}></GameBoard>
+        <GameBoard
+          game={game}
+          updateGameBoard={updateGameBoard}
+          setCurrentQuestion={setCurrentQuestion}
+          updateScore={updateScore}
+          restartScore={restartScore}
+          addPlayer={addPlayer}
+          removePlayer={removePlayer}
+        ></GameBoard>
       )}
     </Box>
   );
