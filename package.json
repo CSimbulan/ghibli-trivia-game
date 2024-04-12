@@ -1,5 +1,5 @@
 {
-  "name": "anime-game-show-mern",
+  "name": "ghibli-trivia-show",
   "version": "1.0.0",
   "description": "anime game show for kaede co",
   "main": "server.js",
