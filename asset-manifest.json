@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ghibli-trivia-game/static/css/main.d3ee58a7.css",
+    "main.js": "/ghibli-trivia-game/static/js/main.31ec7351.js",
+    "static/js/787.7a0204f0.chunk.js": "/ghibli-trivia-game/static/js/787.7a0204f0.chunk.js",
+    "index.html": "/ghibli-trivia-game/index.html",
+    "main.d3ee58a7.css.map": "/ghibli-trivia-game/static/css/main.d3ee58a7.css.map",
+    "main.31ec7351.js.map": "/ghibli-trivia-game/static/js/main.31ec7351.js.map",
+    "787.7a0204f0.chunk.js.map": "/ghibli-trivia-game/static/js/787.7a0204f0.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d3ee58a7.css",
+    "static/js/main.31ec7351.js"
+  ]
+}
